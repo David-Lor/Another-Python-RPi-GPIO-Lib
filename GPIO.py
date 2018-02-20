@@ -19,8 +19,8 @@ class Pin(object):
     def __init__(self, pin, mode, default_value=False):
         self.pin = int(pin) #GPIO Pin number
         self.mode = mode #GPIO mode (IN or OUT)
-        if self.mode not in (IN, OUT):
-            raise(ValueError("Pin Mode must be IN or OUT"))
+        if self.mode not in (IN, OUT): #Check "mode" param
+            raise(self.WrongInput("Pin Mode must be IN or OUT"))
         self.on = True #Is the pin enabled? (ready to use) (exported)
         os.popen("echo {} > /sys/class/gpio/export".format(pin)) #Enable pin (export)
         if mode == OUTPUT: #If pin is OUTPUT
@@ -29,7 +29,7 @@ class Pin(object):
         else: #If pin is INPUT
             os.popen("echo in > /sys/class/gpio/gpio{}/direction".format(pin))
         @atexit.register
-        def atexit_f(self): #Deactivate the pin at exit (unexport)
+        def atexit_f(): #Deactivate the pin at exit (unexport)
             self.deactivate()
     def write(self, value):
         """Write a digital value to an OUT pin
@@ -94,7 +94,7 @@ class Pin(object):
                         before = now
                         self.callback()
                     sleep(self.sleep_value)
-        return Interrupt(self.pin, callback, edge, frequency)
+        return Interrupt(self, callback, edge, frequency)
     class WrongInput(Exception):
         pass
     class InvalidOperation(Exception):
