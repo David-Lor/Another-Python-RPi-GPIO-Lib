@@ -68,7 +68,7 @@ class Pin(object):
                 :param edge: Interruption edge (FALLING, RISING, BOTH)
                 :param frequency: Pin value polling frequency in ms
                 """
-                self.pin = pin
+                self.pin = pin #Pin object
                 self.callback = callback #TODO soporte a parametros en funcion callback
                 self.edge = edge
                 if self.edge not in (RISING, FALLING, BOTH):
@@ -76,23 +76,22 @@ class Pin(object):
                 self.frequency = frequency #Freq in ms
                 self.sleep_value = frequency/1000.0 #Freq in seconds (used by time.sleep)
             def start(self):
+                self.running = True #Set to False to stop the While loop in thread
                 self.thread = threading.Thread(target=self.thread_f)
                 self.thread.daemon = True
                 self.thread.start()
+            def stop(self):
+                self.running = False
             def thread_f(self):
                 before = self.pin.read() #Get initial value
                 sleep(self.sleep_value)
-                while True:
+                while self.running:
                     now = self.pin.read()
-                    #if (self.edge = RISING and (not before and now)) or (self.edge = FALLING and (before and not now)) or (self.edge = BOTH and (before != now)):
-                    #TODO conseguir usar el if
-                    trigger = False
-                    trigger = bool(self.edge == RISING and bool(not before and now))
-                    trigger = bool(self.edge == FALLING and bool(before and not now))
-                    trigger = bool(self.edge == BOTH and bool(before != now))
-                    if trigger:
-                        before = now
+                    if (self.edge == RISING and (not before and now)) or \
+                    (self.edge == FALLING and (before and not now)) or \
+                    (self.edge == BOTH and (before != now)):
                         self.callback()
+                    before = now
                     sleep(self.sleep_value)
         return Interrupt(self, callback, edge, frequency)
     class WrongInput(Exception):
