@@ -55,10 +55,11 @@ class Pin(object):
             os.popen("echo {} > /sys/class/gpio/unexport".format(self.pin))
             self.on = False
     
-    def attach_interrupt(self, callback, edge, frequency=100):
+    def attach_interrupt(self, callback, edge, args=(), frequency=100):
         """
         :param callback: Target function
         :param edge: Interruption edge (FALLING, RISING, BOTH)
+        :param args: List of parameters to pass to callback function (Default=empty list)
         :param frequency: Pin value polling frequency in ms
         """
         if self.mode == OUTPUT:
@@ -93,7 +94,7 @@ class Pin(object):
                     if (self.edge == RISING and (not before and now)) or \
                     (self.edge == FALLING and (before and not now)) or \
                     (self.edge == BOTH and (before != now)):
-                        self.callback()
+                        self.callback(*args)
                     before = now
                     sleep(self.sleep_value)
         return Interrupt(self, callback, edge, frequency)
