@@ -63,6 +63,8 @@ int_both.stop()
 
 ### Interrupt with args
 
+Not implemented yet
+
 ```python
 from GPIO import *
 
