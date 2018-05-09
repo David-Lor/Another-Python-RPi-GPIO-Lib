@@ -1,6 +1,6 @@
 # Another-Python-RPi-GPIO-Lib
 
-A very simple Python script for using Raspberry Pi GPIO. I wrote it because I coudln't install the widely used RPi-GPIO library on OpenWRT/LEDE.
+A very simple Python tool for using Raspberry Pi GPIO inputs/outputs. This has been created for OpenWRT/LEDE, since these systems can't compile the code required by other GPIO libraries like the common RPi-GPIO.
 
 Pins are initialized as objects. You can read and write digital values, as well as attach some sort of "interrupts" to the read pins (it's actually a looped polling over the pin value).
 
